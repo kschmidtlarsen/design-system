@@ -1,0 +1,60 @@
+# Yggdrasil Design System — "Graphite Iris"
+
+The single, central design system for every *.exe.pm app. If you are an agent
+building or editing one of these apps, use this — do NOT invent per-app palettes,
+buttons, spacing, or components. One change here repaints every site.
+
+Source: https://github.com/kschmidtlarsen/design-system
+Live showcase (all components, light + dark): https://design.exe.pm
+Stylesheet: https://design.exe.pm/latest/iris.css
+Tailwind preset: https://design.exe.pm/latest/tailwind-preset.js
+
+## Use it (no build step)
+
+Add to every app's <head>, BEFORE the Tailwind CDN script:
+
+    <link rel="stylesheet" href="https://design.exe.pm/latest/iris.css">
+    <script src="https://design.exe.pm/latest/tailwind-preset.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { presets: [YGGDRASIL_DESIGN] }</script>
+
+Set the theme on <html>: data-theme="dark" (default) or data-theme="light".
+
+Then style with either:
+- Tailwind utilities mapped to tokens: bg-bg, bg-surface, bg-surface-2, text-ink,
+  text-muted, text-faint, border-line, bg-accent, text-accent-ink, rounded, etc.
+- Component classes: .ys-btn (--primary/--secondary/--ghost/--danger/--invert),
+  .ys-card, .ys-field/.ys-input, .ys-rail/.ys-nav, .ys-pill (--accent/--ok/--warn/--bad),
+  .ys-tag, .ys-itag, .ys-kbd, .ys-table, .ys-seg, .ys-stone, plus motion helpers
+  .ys-spinner/.ys-reveal/.ys-typing/.ys-live-dot.
+
+## Tokens (CSS custom properties; light + dark both defined)
+
+--bg --surface --surface-2 --line --line-2 --ink --muted --faint
+--accent (#6C63D6 iris) --accent-ink --accent-2 --accent-surface --on-accent
+--ok --warn --bad --radius (3px) --invert-surface/-ink/-line/-muted
+--stone-c --stone-f (matte texture) --font-sans --font-mono
+
+## If a site needs something specific (override ladder — cheapest first)
+
+1. Retune a token locally, AFTER loading iris.css:
+       :root { --accent: #0E8FA3; }
+   The site looks different but stays in the system and keeps getting updates.
+2. Add a namespaced component in the app's own CSS, built from shared tokens
+   (var(--surface), var(--line), var(--radius)).
+3. Scope-opt-out for a genuine one-off (rare).
+
+HARD RULE: never fork or copy the core .ys-* component CSS into an app. That
+reintroduces drift — the exact thing this system exists to kill.
+
+## Anti-"AI shine" — a rule, not a preference
+
+No gradients. No glow (shadows are neutral, never coloured). No glassmorphism.
+No gradient text. No emoji as icons. No neon saturation. Emphasis and warmth come
+from flat fills, hairline borders, the stone texture, and motion that maps to real
+system state (a request in flight, a deploy running) — never decoration.
+
+## Versioning
+
+/latest/ is the live channel — link this; edits reach every site on next load.
+/vN/ are immutable snapshots kept only for rollback; apps should not link them.
