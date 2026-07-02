@@ -1,0 +1,20 @@
+# NOTE: design-system does NOT run as a standalone stack.
+#
+# Production runs it as the `design` service (container: yggdrasil-design) inside
+# the Yggdrasil INFRA stack — stack 53, repo yggdrasil-stack, docker-compose.yml.
+# It keeps its own repo/image/CI here; Watchtower updates only the yggdrasil-design
+# container when a new image is pushed, so editing the design never redeploys the
+# infra stack (Urd stays untouched).
+#
+# The service block, as declared in yggdrasil-stack/docker-compose.yml:
+#
+#   design:
+#     image: ghcr.io/kschmidtlarsen/design-system:latest
+#     container_name: yggdrasil-design
+#     restart: unless-stopped
+#     ports: ["6110:80"]        # public via design.exe.pm — NO Cloudflare Access
+#     networks: [bifrost]
+#     labels: ["com.centurylinklabs.watchtower.enable=true"]
+#
+# Local preview: `docker compose -f docker-compose.dev.yml up`  (or, no Docker:
+# `python3 -m http.server -d public 8080`).

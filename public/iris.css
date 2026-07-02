@@ -1,0 +1,202 @@
+/* ============================================================================
+ * Yggdrasil Design System — "Graphite Iris"
+ * The single source of truth for the look of every *.exe.pm app.
+ *
+ * Contract:
+ *   - Tokens are CSS custom properties (unprefixed, matching the existing
+ *     convention) so a site can retune one locally: :root { --accent: #0E8FA3 }
+ *   - Component classes are prefixed .ys-* so they never clobber an app's
+ *     own classes during migration.
+ *   - Change a value here, redeploy design.exe.pm, and every site that links
+ *     /latest/iris.css repaints on next load. There is only one definition.
+ *
+ * Anti-"AI shine" is a rule, not a preference: no gradients, no glow, no
+ * glassmorphism, no gradient text, no emoji-as-icons, no neon saturation.
+ * Warmth/emphasis comes from flat fills, hairlines, material texture and
+ * motion that maps to real system state.
+ * ==========================================================================*/
+
+/* ---- Tokens: dark is the default ground -------------------------------- */
+:root {
+  color-scheme: dark;
+
+  --bg: #191A21;            /* page ground — lifted charcoal, not near-black */
+  --surface: #212430;       /* cards / panels */
+  --surface-2: #292C3A;     /* hover / inset / segmented control */
+  --line: #3B4052;          /* hairline borders */
+  --line-2: #4A5069;        /* stronger borders / dashed */
+  --ink: #E7E8EE;           /* primary text */
+  --muted: #9A9EB0;         /* secondary text */
+  --faint: #6A6E82;         /* tertiary / metadata */
+
+  /* Accent — default is the muted iris (deliberately NOT neon #7C6CFF). */
+  --accent: #6C63D6;
+  --accent-ink: #B9B2FF;    /* accent text / links / marks on dark */
+  --accent-2: #8B84E8;      /* brighter accent for small live marks */
+  --accent-surface: rgba(108, 99, 214, .15);
+  --on-accent: #FFFFFF;     /* text on an accent fill */
+
+  /* Semantic — muted, never candy. Separate from the accent. */
+  --ok: #35D0A0;
+  --warn: #E3C05A;
+  --bad: #F0788A;
+
+  /* Tonal counterpoint — one inverted pair per theme (light on dark). */
+  --invert-surface: #EEEFF4;
+  --invert-line: #D2D5E0;
+  --invert-ink: #1B1D27;
+  --invert-muted: #585D6E;
+
+  --radius: 3px;            /* crisp corners */
+  --shadow: 0 16px 38px -26px rgba(0,0,0,.44), 0 2px 7px -3px rgba(0,0,0,.3);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "IBM Plex Mono", "Cascadia Code", Menlo, monospace;
+
+  /* Stone-like material: a coarse tonal mottle + a fine grain, composited
+     onto the menu and buttons so surfaces read as a material, not a fill. */
+  --stone-c: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='sc'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03' numOctaves='4' seed='11'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23sc)'/%3E%3C/svg%3E");
+  --stone-f: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='sf'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23sf)'/%3E%3C/svg%3E");
+}
+
+/* ---- Tokens: dimmed light (set data-theme="light" on <html>) ----------- */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #DADCE3;            /* dimmed grey, never pure white */
+  --surface: #E7E9EF;
+  --surface-2: #D0D3DC;
+  --line: #BDC2CE;
+  --line-2: #A2A8B7;
+  --ink: #1A1C24;
+  --muted: #555A66;
+  --faint: #858A98;
+
+  --accent: #574FC0;
+  --accent-ink: #4A3FB0;
+  --accent-2: #6C63D6;
+  --accent-surface: rgba(87, 79, 192, .12);
+  --on-accent: #FFFFFF;
+
+  --ok: #0E9B77;
+  --warn: #B45309;
+  --bad: #DC2626;
+
+  --invert-surface: #282B39;
+  --invert-line: #3B3F51;
+  --invert-ink: #EAECF3;
+  --invert-muted: #A3A8B8;
+}
+
+/* ---- Base -------------------------------------------------------------- */
+html { background: var(--bg); }
+body { color: var(--ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+:where(a) { color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+/* ---- Typographic helpers ---------------------------------------------- */
+.ys-mono { font-family: var(--font-mono); }
+.ys-microlabel { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.ys-tnum { font-variant-numeric: tabular-nums; }
+
+/* ---- Buttons ----------------------------------------------------------- */
+.ys-btn {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+  border-radius: var(--radius); padding: 8px 14px; border: 1px solid transparent;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+  position: relative; overflow: hidden; isolation: isolate;
+  transition: filter .15s, background .15s, border-color .15s;
+}
+.ys-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; }
+/* stone material sits over the fill, under the label */
+.ys-btn::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1;
+  background-image: var(--stone-c), var(--stone-f); background-size: 220px, 110px;
+  opacity: .11; mix-blend-mode: soft-light; pointer-events: none;
+}
+[data-theme="light"] .ys-btn::before { opacity: .15; mix-blend-mode: multiply; }
+.ys-btn--primary { background: var(--accent); color: var(--on-accent); }
+.ys-btn--primary:hover { filter: brightness(1.07); }
+.ys-btn--secondary { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
+.ys-btn--secondary:hover { border-color: var(--line-2); }
+.ys-btn--ghost { background: transparent; color: var(--muted); }
+.ys-btn--ghost:hover { background: var(--surface-2); color: var(--ink); }
+.ys-btn--danger { background: transparent; color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+.ys-btn--danger:hover { background: color-mix(in srgb, var(--bad) 14%, transparent); }
+/* the tonal-counterpoint button: light on dark, dark on light */
+.ys-btn--invert { background: var(--invert-surface); color: var(--invert-ink); border-color: var(--invert-line); }
+.ys-btn--invert svg { stroke: var(--invert-ink); }
+.ys-btn--invert:hover { filter: brightness(.97); }
+
+/* ---- Inputs ------------------------------------------------------------ */
+.ys-field { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 11px; color: var(--muted); font-size: 13px; }
+.ys-field svg { width: 15px; height: 15px; stroke: var(--faint); fill: none; }
+.ys-input { border: 0; background: transparent; color: var(--ink); font-family: inherit; font-size: 13px; outline: none; width: 100%; }
+.ys-input::placeholder { color: var(--faint); }
+
+/* ---- Card / panel ------------------------------------------------------ */
+.ys-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.ys-card__head { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+.ys-card__head h3 { font-size: 14px; font-weight: 650; margin: 0; letter-spacing: -.01em; }
+
+/* ---- Navigation rail (the menu — stone-surfaced) ----------------------- */
+.ys-rail { position: relative; background: color-mix(in srgb, var(--surface) 55%, var(--bg)); border-right: 1px solid var(--line); padding: 18px 12px; display: flex; flex-direction: column; gap: 3px; }
+.ys-rail::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  background-image: var(--stone-c), var(--stone-f); background-size: 320px, 120px;
+  opacity: .13; mix-blend-mode: overlay; pointer-events: none;
+}
+[data-theme="light"] .ys-rail::before { opacity: .18; mix-blend-mode: multiply; }
+.ys-rail > * { position: relative; z-index: 1; }
+.ys-nav { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius); color: var(--muted); font-size: 13px; cursor: pointer; border-left: 2px solid transparent; }
+.ys-nav svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+.ys-nav:hover { background: var(--surface-2); color: var(--ink); }
+.ys-nav--active { background: var(--accent-surface); color: var(--accent-ink); border-left-color: var(--accent); font-weight: 600; }
+
+/* ---- Pills, tags, chips, keys ----------------------------------------- */
+.ys-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; letter-spacing: .02em; }
+.ys-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ys-pill--accent { color: var(--accent-ink); background: var(--accent-surface); }
+.ys-pill--ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.ys-pill--warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 15%, transparent); }
+.ys-pill--bad { color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, transparent); }
+.ys-tag { font-family: var(--font-mono); font-size: 11px; padding: 3px 9px; border-radius: var(--radius); border: 1px solid var(--line); color: var(--muted); background: var(--surface-2); }
+/* inverted chip — the counterpoint mark */
+.ys-itag { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; background: var(--invert-surface); color: var(--invert-ink); display: inline-flex; align-items: center; gap: 5px; }
+.ys-itag::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.ys-itag--plain::before { display: none; }
+.ys-kbd { font-family: var(--font-mono); font-size: 10px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line-2); color: var(--muted); background: var(--surface); }
+.ys-kbd--invert { background: var(--invert-surface); color: var(--invert-ink); border-color: var(--invert-line); }
+
+/* ---- Table ------------------------------------------------------------- */
+.ys-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ys-table th { text-align: left; font-family: var(--font-mono); font-weight: 500; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); padding: 9px 16px; border-bottom: 1px solid var(--line); }
+.ys-table td { padding: 10px 16px; border-bottom: 1px solid var(--line); color: var(--ink); }
+.ys-table tr:last-child td { border-bottom: 0; }
+.ys-table td.ys-num { font-variant-numeric: tabular-nums; text-align: right; color: var(--muted); font-family: var(--font-mono); font-size: 11.5px; }
+.ys-table tbody tr:hover td { background: var(--surface-2); }
+
+/* ---- Segmented control (a counterpoint element) ------------------------ */
+.ys-seg { display: flex; gap: 2px; background: var(--invert-surface); border: 1px solid var(--invert-line); border-radius: calc(var(--radius) + 2px); padding: 2px; }
+.ys-seg__tab { font-family: var(--font-mono); font-size: 11px; color: var(--invert-muted); padding: 4px 10px; border-radius: var(--radius); cursor: pointer; }
+.ys-seg__tab--on { color: var(--invert-ink); background: color-mix(in srgb, var(--invert-ink) 13%, transparent); }
+
+/* ---- Optional stone utility (opt any surface into the material) -------- */
+.ys-stone { position: relative; isolation: isolate; }
+.ys-stone::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background-image: var(--stone-c), var(--stone-f); background-size: 320px, 120px; opacity: .1; mix-blend-mode: overlay; pointer-events: none; }
+[data-theme="light"] .ys-stone::before { opacity: .15; mix-blend-mode: multiply; }
+
+/* ---- Motion layer: things move only because the system is doing something */
+@keyframes ys-spin { to { transform: rotate(360deg); } }
+@keyframes ys-blink { 50% { opacity: 0; } }
+@keyframes ys-reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes ys-ring { 0% { transform: scale(.75); opacity: .55; } 100% { transform: scale(1.6); opacity: 0; } }
+.ys-spinner { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line-2); border-top-color: var(--accent); animation: ys-spin .7s linear infinite; flex-shrink: 0; }
+.ys-reveal { animation: ys-reveal .45s cubic-bezier(.22,.61,.36,1) both; }
+.ys-typing::after { content: "▍"; color: var(--accent); margin-left: 1px; animation: ys-blink 1s steps(1) infinite; }
+.ys-live-dot { position: relative; }
+.ys-live-dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid currentColor; opacity: .5; animation: ys-ring 2s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

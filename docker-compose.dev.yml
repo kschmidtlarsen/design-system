@@ -1,0 +1,7 @@
+# Local preview only. Production runs as the `design` service in the Yggdrasil
+# infra stack (see docker-compose.prod.yml note). http://localhost:8080
+services:
+  design-system:
+    build: .
+    ports:
+      - "8080:80"

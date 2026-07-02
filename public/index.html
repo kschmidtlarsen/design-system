@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yggdrasil Design System — Graphite Iris</title>
+  <link rel="stylesheet" href="/latest/iris.css">
+  <style>
+    body { margin: 0; }
+    .wrap { max-width: 940px; margin: 0 auto; padding: 40px 24px 90px; }
+    header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+    h1 { font-size: 26px; letter-spacing: -.02em; margin: 0; }
+    .sub { color: var(--muted); font-size: 15px; margin: 6px 0 34px; max-width: 60ch; }
+    h2 { font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--faint); margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 10px; }
+    .sw { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .sw i { display: block; height: 46px; }
+    .sw span { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--muted); padding: 6px 8px; }
+    .demoapp { display: grid; grid-template-columns: 180px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .demoapp .m { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Yggdrasil Design System</h1>
+        <div class="sub">Graphite Iris — the one look every <code>*.exe.pm</code> app shares. This page is served from the same <code>iris.css</code> your apps link, so it always shows the live system.</div>
+      </div>
+      <div class="ys-seg" role="group" aria-label="Theme">
+        <span class="ys-seg__tab" data-t="light">Light</span>
+        <span class="ys-seg__tab ys-seg__tab--on" data-t="dark">Dark</span>
+      </div>
+    </header>
+
+    <h2>Palette</h2>
+    <div class="grid" id="palette"></div>
+
+    <h2>Buttons — stone-surfaced</h2>
+    <div class="row">
+      <button class="ys-btn ys-btn--primary">Primary</button>
+      <button class="ys-btn ys-btn--secondary">Secondary</button>
+      <button class="ys-btn ys-btn--ghost">Ghost</button>
+      <button class="ys-btn ys-btn--danger">Danger</button>
+      <button class="ys-btn ys-btn--invert">Invert</button>
+    </div>
+
+    <h2>Status &amp; tags</h2>
+    <div class="row">
+      <span class="ys-pill ys-pill--accent">In dev</span>
+      <span class="ys-pill ys-pill--ok">Done</span>
+      <span class="ys-pill ys-pill--warn">Waiting</span>
+      <span class="ys-pill ys-pill--bad">Blocked</span>
+      <span class="ys-tag">tag</span>
+      <span class="ys-itag">live</span>
+      <span class="ys-kbd">⌘K</span>
+      <span class="ys-spinner" title="working"></span>
+    </div>
+
+    <h2>In context</h2>
+    <div class="demoapp">
+      <nav class="ys-rail">
+        <div class="ys-nav ys-nav--active">Board</div>
+        <div class="ys-nav">Health</div>
+        <div class="ys-nav">Deploys</div>
+        <div class="ys-nav">Settings</div>
+      </nav>
+      <div class="m">
+        <div class="ys-field" style="max-width:280px"><span>Search…</span></div>
+        <div class="ys-card">
+          <div class="ys-card__head"><h3>In development</h3><span class="ys-itag">3 active</span></div>
+          <table class="ys-table">
+            <thead><tr><th>Card</th><th>Status</th><th class="ys-num">Pts</th></tr></thead>
+            <tbody>
+              <tr><td>Card-scoped agent chat</td><td><span class="ys-pill ys-pill--accent">In dev</span></td><td class="ys-num">8</td></tr>
+              <tr><td>Common design system</td><td><span class="ys-pill ys-pill--warn">Discovery</span></td><td class="ys-num">13</td></tr>
+              <tr><td>Batch-move endpoint</td><td><span class="ys-pill ys-pill--ok">Done</span></td><td class="ys-num">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/latest/tailwind-preset.js"></script>
+  <script>
+    // theme toggle
+    document.querySelectorAll('.ys-seg__tab').forEach(t => t.addEventListener('click', () => {
+      document.querySelectorAll('.ys-seg__tab').forEach(x => x.classList.remove('ys-seg__tab--on'));
+      t.classList.add('ys-seg__tab--on');
+      document.documentElement.setAttribute('data-theme', t.dataset.t);
+      paint();
+    }));
+    // palette rendered from live token values
+    const keys = ['--bg','--surface','--surface-2','--line','--ink','--muted','--accent','--accent-ink','--ok','--warn','--bad','--invert-surface'];
+    function paint() {
+      const cs = getComputedStyle(document.documentElement);
+      document.getElementById('palette').innerHTML = keys.map(k => {
+        const v = cs.getPropertyValue(k).trim();
+        return `<div class="sw"><i style="background:${v}"></i><span>${k}<br>${v}</span></div>`;
+      }).join('');
+    }
+    paint();
+  </script>
+</body>
+</html>
