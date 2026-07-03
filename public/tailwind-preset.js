@@ -40,3 +40,24 @@ window.YGGDRASIL_DESIGN = {
     }
   }
 };
+
+/* Opt-in gray→iris neutral remap for bare-Tailwind apps that style with hardcoded
+ * gray/slate/zinc/neutral utilities (bg-gray-800, text-slate-300, …). Spread it INTO
+ * the app's own tailwind.config so those utilities resolve to iris tokens without a
+ * class rewrite:
+ *
+ *   tailwind.config = { presets:[YGGDRASIL_DESIGN], theme:{ extend:{ colors:{
+ *     slate: YGGDRASIL_GRAY_COMPAT, gray: YGGDRASIL_GRAY_COMPAT,
+ *     zinc:  YGGDRASIL_GRAY_COMPAT, neutral: YGGDRASIL_GRAY_COMPAT,
+ *   }}}};
+ *
+ * NOT folded into the default preset on purpose: it would hijack the neutral palettes
+ * for every app, and a var()-valued color under an /opacity suffix (bg-slate-800/50)
+ * renders FULLY TRANSPARENT — keep scrims/tints on native palettes (black, or that
+ * shade left unremapped) or hand-fix. 700→--line suits border-dominant apps; if an app
+ * uses 700 as a button FILL, override it locally to --surface-2. */
+window.YGGDRASIL_GRAY_COMPAT = {
+  950: "var(--bg)", 900: "var(--bg)", 850: "var(--surface)", 800: "var(--surface)",
+  750: "var(--surface-2)", 700: "var(--line)", 600: "var(--line-2)", 500: "var(--faint)",
+  400: "var(--muted)", 300: "var(--ink)", 200: "var(--ink)", 100: "var(--ink)", 50: "var(--ink)"
+};
