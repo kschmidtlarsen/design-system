@@ -11,8 +11,9 @@ Watchtower updates only this container, so a design edit never redeploys stack 5
 
 ## What it is
 - `public/iris.css` — tokens (light + dark) + `.ys-*` components + motion + stone material. **The deliverable.**
-- `public/tailwind-preset.js` — maps tokens onto Tailwind CDN utilities (`bg-surface`, etc.).
+- `public/tailwind-preset.js` — maps tokens onto Tailwind CDN utilities (`bg-surface`, etc.). Also exports `window.YGGDRASIL_GRAY_COMPAT`, an opt-in gray→iris remap for `slate`/`gray`/`zinc`/`neutral` utilities.
 - `public/index.html` — living showcase, served from the same `iris.css`.
+- `public/llms.txt` — canonical agent-facing instruction file for consuming the design system.
 - `/latest/` = live channel apps link; `/vN/` = immutable rollback snapshots.
 
 ## The look (locked 2026-07-02, kanban card-87e5da61)
@@ -31,5 +32,5 @@ glassmorphism, gradient text, emoji-as-icons, or neon saturation.
 
 ## Deploy
 Push to `main` → CI builds image (packages:write) → GHCR → Watchtower redeploys.
-Cross-check the host port against live Portainer bindings before first deploy
-(compose provisionally uses 6125; host allocation drifts from infrastructure.yml).
+Live as `yggdrasil-design` on host port 6110 (`6110:80` in the infra stack compose),
+served publicly at design.exe.pm.
