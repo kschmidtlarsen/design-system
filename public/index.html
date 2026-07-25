@@ -19,6 +19,13 @@
     .sw span { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--muted); padding: 6px 8px; }
     .demoapp { display: grid; grid-template-columns: 180px 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
     .demoapp .m { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .note { font-size: 12.5px; color: var(--muted); max-width: 62ch; margin: -4px 0 12px; }
+    .note code { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent-ink); }
+    /* the showcase itself must survive the viewport it preaches about */
+    @media (max-width: 760px) {
+      .demoapp { grid-template-columns: minmax(0, 1fr); }
+      .ys-rail { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
+    }
   </style>
 </head>
 <body>
@@ -58,6 +65,26 @@
       <span class="ys-spinner" title="working"></span>
     </div>
 
+    <h2>Top bar — collapses below 760px</h2>
+    <p class="note">Narrow the window: the links become a sheet behind the burger
+      instead of widening the page. Behaviour comes from
+      <code>/latest/iris-nav.js</code>; items are <code>.ys-nav</code>.</p>
+    <nav class="ys-topbar" data-ys-topbar style="border:1px solid var(--line);position:static">
+      <div class="ys-topbar__inner">
+        <a class="ys-topbar__brand" href="#">Yggdrasil</a>
+        <button class="ys-topbar__burger">
+          <svg class="ys-topbar__open" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          <svg class="ys-topbar__close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
+        </button>
+        <div class="ys-topbar__links">
+          <a class="ys-nav ys-nav--active" href="#">Board</a>
+          <a class="ys-nav" href="#">Health</a>
+          <a class="ys-nav" href="#">Deploys</a>
+          <a class="ys-nav" href="#">Settings</a>
+        </div>
+      </div>
+    </nav>
+
     <h2>In context</h2>
     <div class="demoapp">
       <nav class="ys-rail">
@@ -84,6 +111,7 @@
   </div>
 
   <script src="/latest/tailwind-preset.js"></script>
+  <script src="/latest/iris-nav.js" defer></script>
   <script>
     // theme toggle
     document.querySelectorAll('.ys-seg__tab').forEach(t => t.addEventListener('click', () => {

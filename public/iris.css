@@ -153,6 +153,91 @@ body { color: var(--ink); font-family: var(--font-sans); -webkit-font-smoothing:
 .ys-nav:hover { background: var(--surface-2); color: var(--ink); }
 .ys-nav--active { background: var(--accent-surface); color: var(--accent-ink); border-left-color: var(--accent); font-weight: 600; }
 
+/* ---- Top bar (the horizontal menu — stone-surfaced, collapses on mobile) -
+ * The rail above is for desktop-width sidebars; this is the top-of-page menu
+ * most apps use. It exists here because every app was hand-rolling one and
+ * laying the links out inline with no wrap, which makes the document wider
+ * than a phone viewport — the bar alone forces horizontal scroll.
+ *
+ * Markup (items reuse .ys-nav, so hover/active styling is already shared):
+ *   <nav class="ys-topbar" data-ys-topbar>
+ *     <a class="ys-topbar__brand" href="/">App</a>
+ *     <button class="ys-topbar__burger" aria-label="Menu" aria-expanded="false"
+ *             aria-controls="ys-menu"><svg …>…</svg></button>
+ *     <div class="ys-topbar__links" id="ys-menu">
+ *       <a class="ys-nav ys-nav--active" href="/">Today</a>
+ *       <a class="ys-nav" href="/other">Other</a>
+ *     </div>
+ *   </nav>
+ *
+ * Load /latest/iris-nav.js to get the toggle behaviour (open/close, outside
+ * click, Escape, reset on resize) wired automatically — no per-app JS.
+ * Below 760px the links become a sheet under the bar; above, one inline row.
+ * ------------------------------------------------------------------------ */
+.ys-topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--surface) 55%, var(--bg));
+  border-bottom: 1px solid var(--line);
+}
+.ys-topbar::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  background-image: var(--stone-c), var(--stone-f); background-size: 320px, 120px;
+  opacity: .13; mix-blend-mode: overlay; pointer-events: none;
+}
+[data-theme="light"] .ys-topbar::before { opacity: .18; mix-blend-mode: multiply; }
+.ys-topbar__inner {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 4px;
+  min-height: 52px; max-width: var(--ys-topbar-max, 1080px);
+  margin: 0 auto; padding: 0 18px;
+}
+/* no __inner? treat the bar itself as the row, so the simple markup works too */
+.ys-topbar:not(:has(.ys-topbar__inner)) {
+  display: flex; align-items: center; gap: 4px; min-height: 52px; padding: 0 18px;
+}
+.ys-topbar__brand {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 8px; flex: 0 0 auto;
+  margin-right: 12px; font-size: 15px; font-weight: 700; letter-spacing: -.01em;
+  color: var(--ink); text-decoration: none;
+}
+.ys-topbar__brand svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+.ys-topbar__links { position: relative; z-index: 1; display: flex; align-items: center; gap: 4px; min-width: 0; }
+/* items inside the bar: underline the active one rather than the rail's left mark */
+.ys-topbar .ys-nav { white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; }
+.ys-topbar .ys-nav--active { border-left: 0; border-bottom-color: var(--accent); }
+.ys-topbar__spacer { flex: 1 1 auto; }
+/* The burger is a real button with an SVG glyph — never a "☰" character. */
+.ys-topbar__burger {
+  position: relative; z-index: 1;
+  display: none; margin-left: auto; flex: 0 0 auto;
+  width: 38px; height: 38px; place-items: center; padding: 0; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius);
+  color: var(--ink);
+}
+.ys-topbar__burger:hover { border-color: var(--line-2); }
+.ys-topbar__burger svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+/* two glyphs, one shown at a time — no text swap, no layout shift */
+.ys-topbar__burger .ys-topbar__close,
+.ys-topbar__burger[aria-expanded="true"] .ys-topbar__open { display: none; }
+.ys-topbar__burger[aria-expanded="true"] .ys-topbar__close { display: block; }
+
+@media (max-width: 760px) {
+  .ys-topbar__burger { display: grid; }
+  .ys-topbar__spacer { display: none; }
+  .ys-topbar__brand { margin-right: 0; }
+  .ys-topbar__links {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 2;
+    display: none; flex-direction: column; align-items: stretch; gap: 2px;
+    padding: 8px; background: var(--surface);
+    border-bottom: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  .ys-topbar__links.ys-open { display: flex; }
+  /* ≥44px touch targets, and the active mark reads better as a fill when stacked */
+  .ys-topbar .ys-nav { padding: 12px 13px; font-size: 14px; border-bottom: 0; }
+  .ys-topbar .ys-nav--active { background: var(--accent-surface); border-bottom: 0; }
+}
+
 /* ---- Pills, tags, chips, keys ----------------------------------------- */
 .ys-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; letter-spacing: .02em; }
 .ys-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }

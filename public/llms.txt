@@ -8,6 +8,7 @@ Source: https://github.com/kschmidtlarsen/design-system
 Live showcase (all components, light + dark): https://design.exe.pm
 Stylesheet: https://design.exe.pm/latest/iris.css
 Tailwind preset: https://design.exe.pm/latest/tailwind-preset.js
+Top-bar behaviour (optional): https://design.exe.pm/latest/iris-nav.js
 
 ## Use it (no build step)
 
@@ -24,9 +25,43 @@ Then style with either:
 - Tailwind utilities mapped to tokens: bg-bg, bg-surface, bg-surface-2, text-ink,
   text-muted, text-faint, border-line, bg-accent, text-accent-ink, rounded, etc.
 - Component classes: .ys-btn (--primary/--secondary/--ghost/--danger/--invert),
-  .ys-card, .ys-field/.ys-input, .ys-rail/.ys-nav, .ys-pill (--accent/--ok/--warn/--bad),
-  .ys-tag, .ys-itag, .ys-kbd, .ys-table, .ys-seg, .ys-stone, plus motion helpers
-  .ys-spinner/.ys-reveal/.ys-typing/.ys-live-dot.
+  .ys-card, .ys-field/.ys-input, .ys-topbar + .ys-rail/.ys-nav, .ys-pill
+  (--accent/--ok/--warn/--bad), .ys-tag, .ys-itag, .ys-kbd, .ys-table, .ys-seg,
+  .ys-stone, plus motion helpers .ys-spinner/.ys-reveal/.ys-typing/.ys-live-dot.
+
+## Navigation: use .ys-topbar, never hand-roll a menu
+
+Every app was building its own top bar and laying the links out inline with no
+wrap, which makes the document wider than a phone viewport — the bar alone forces
+horizontal scroll. Use the shared component. Items are .ys-nav, so hover/active
+styling comes free; .ys-rail is the vertical (desktop sidebar) variant.
+
+    <nav class="ys-topbar" data-ys-topbar>
+      <div class="ys-topbar__inner">
+        <a class="ys-topbar__brand" href="/">App name</a>
+        <button class="ys-topbar__burger">
+          <svg class="ys-topbar__open" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          <svg class="ys-topbar__close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
+        </button>
+        <div class="ys-topbar__links">
+          <a class="ys-nav ys-nav--active" href="/">Today</a>
+          <a class="ys-nav" href="/other">Other</a>
+        </div>
+      </div>
+    </nav>
+
+Load iris-nav.js (defer) and the mobile menu wires itself — toggle, close on
+outside click / Escape / item activation, and reset when the viewport grows past
+the 760px breakpoint. No per-app JS. For bars rendered after load, call
+window.YggdrasilNav.init(root); it is idempotent per element.
+
+.ys-topbar__inner is optional (it centres the row at --ys-topbar-max, default
+1080px); omit it and the bar itself becomes the row. .ys-topbar__spacer pushes
+trailing items right on desktop and is hidden on mobile.
+
+Verify any nav change at a 360px-wide viewport: document.scrollWidth must equal
+document.clientWidth. A bar that "looks fine" on a laptop is the exact failure
+mode this component exists to prevent.
 
 ## Tokens (CSS custom properties; light + dark both defined)
 

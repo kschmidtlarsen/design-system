@@ -12,6 +12,7 @@ Watchtower updates only this container, so a design edit never redeploys stack 5
 ## What it is
 - `public/iris.css` — tokens (light + dark) + `.ys-*` components + motion + stone material. **The deliverable.**
 - `public/tailwind-preset.js` — maps tokens onto Tailwind CDN utilities (`bg-surface`, etc.). Also exports `window.YGGDRASIL_GRAY_COMPAT`, an opt-in gray→iris remap for `slate`/`gray`/`zinc`/`neutral` utilities.
+- `public/iris-nav.js` — optional behaviour for `.ys-topbar`: auto-wires the mobile menu on every `[data-ys-topbar]` (toggle, outside click, Escape, resize reset) so no app needs its own nav JS.
 - `public/index.html` — living showcase, served from the same `iris.css`.
 - `public/llms.txt` — canonical agent-facing instruction file for consuming the design system.
 - `/latest/` = live channel apps link; `/vN/` = immutable rollback snapshots.
@@ -29,6 +30,11 @@ glassmorphism, gradient text, emoji-as-icons, or neon saturation.
 - Component classes are prefixed `.ys-*` so they never clobber an app's classes.
 - Apps may retune tokens locally or add namespaced components — **never fork core CSS.**
 - Never edit `/vN/` snapshots. Cut a new one; don't mutate an old one.
+- Navigation belongs here, not in apps: `.ys-topbar` (horizontal, collapses below
+  760px) and `.ys-rail` (vertical), items are `.ys-nav`. A hand-rolled inline nav
+  is what made every app wider than a phone viewport.
+- Any new file must be added to the Dockerfile's `/latest/` copy list, or
+  `/latest/<file>` 404s while the repo root serves it fine.
 
 ## Deploy
 Push to `main` → CI builds image (packages:write) → GHCR → Watchtower redeploys.
