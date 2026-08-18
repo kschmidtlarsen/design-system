@@ -1,0 +1,20 @@
+name: CI
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'LICENSE', '.gitignore']
+  workflow_dispatch:
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & push to Forge registry
+        env:
+          REG_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+          REG_USER: ${{ secrets.REGISTRY_USER }}
+          IMAGE: design-system
+        run: |
+          echo "$REG_TOKEN" | docker login 192.168.0.20:6125 -u "$REG_USER" --password-stdin
+          docker build -t "192.168.0.20:6125/ksl/$IMAGE:latest" .
+          docker push "192.168.0.20:6125/ksl/$IMAGE:latest"
