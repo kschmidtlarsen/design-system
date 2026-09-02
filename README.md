@@ -103,11 +103,30 @@ flight, a deploy running) — never decoration.
 Add to every app's `<head>`, **before** the Tailwind CDN script:
 
 ```html
-<link rel="stylesheet" href="https://design.exe.pm/latest/iris.css">
-<script src="https://design.exe.pm/latest/tailwind-preset.js"></script>
+<link rel="stylesheet" href="/design/iris.css">
+<script src="/design/tailwind-preset.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { presets: [YGGDRASIL_DESIGN] }</script>
 ```
+
+**Serve it from the app's own origin, not from `https://design.exe.pm`.** Linking
+the public host makes the shared look depend on public DNS, Cloudflare and the
+internet, so a WAN outage renders every app unstyled. Each app mirrors this
+container instead and exposes it at `/design/*`:
+
+- the mirror refreshes from `http://yggdrasil-design` over the Docker network —
+  no DNS, no Cloudflare, no internet
+- it falls back through a disk cache to a copy baked into the app image, so the
+  look survives even this container being down
+- a change here still reaches every app within one refresh interval, without
+  rebuilding any of them
+
+Reference implementation: `yggdrasil/backend/src/services/design-mirror.js`,
+copied per app in the same way as `ntfy.js`. The recipe is in
+`/websites/.claude/CLAUDE.md` under **Design System**.
+
+**A mirror is not a fork.** Apps must never edit their copy — change it here and
+they pick it up.
 
 Set the theme on `<html>`: `data-theme="dark"` (default) or `data-theme="light"`.
 Then style with the token-mapped Tailwind utilities (`bg-surface text-muted
