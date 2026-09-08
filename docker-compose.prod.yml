@@ -9,7 +9,7 @@
 # The service block, as declared in yggdrasil-stack/docker-compose.yml:
 #
 #   design:
-#     image: ghcr.io/kschmidtlarsen/design-system:latest
+#     image: 192.168.0.20:6125/ksl/design-system:latest
 #     container_name: yggdrasil-design
 #     restart: unless-stopped
 #     ports: ["6110:80"]        # public via design.exe.pm — NO Cloudflare Access

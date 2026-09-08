@@ -13,8 +13,16 @@ jobs:
         env:
           REG_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
           REG_USER: ${{ secrets.REGISTRY_USER }}
+          SHA: ${{ github.sha }}
+          TS: ${{ github.event.head_commit.timestamp }}
           IMAGE: design-system
         run: |
           echo "$REG_TOKEN" | docker login 192.168.0.20:6125 -u "$REG_USER" --password-stdin
-          docker build -t "192.168.0.20:6125/ksl/$IMAGE:latest" .
+          docker build \
+            --build-arg BUILD_COMMIT="$SHA" \
+            --build-arg BUILD_TIMESTAMP="$TS" \
+            -t "192.168.0.20:6125/ksl/$IMAGE:latest" .
           docker push "192.168.0.20:6125/ksl/$IMAGE:latest"
+          # Immutable tag: gives a bad deploy a rollback target (:latest alone has none).
+          docker tag "192.168.0.20:6125/ksl/$IMAGE:latest" "192.168.0.20:6125/ksl/$IMAGE:$SHA"
+          docker push "192.168.0.20:6125/ksl/$IMAGE:$SHA"
