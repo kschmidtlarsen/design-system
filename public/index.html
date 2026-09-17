@@ -94,7 +94,23 @@
         <div class="ys-nav">Settings</div>
       </nav>
       <div class="m">
-        <div class="ys-field" style="max-width:280px"><span>Search…</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <div class="ys-field" style="max-width:280px;flex:1"><span>Search…</span></div>
+          <!-- A real <select>, on purpose. There was none here for three months,
+               which is why nobody noticed the option list was never themed: it
+               is drawn by the browser, so it only shows up in a live control.
+               Open it in both themes before shipping a change to this file. -->
+          <select class="ys-input" style="width:auto;padding:8px 11px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)">
+            <optgroup label="Active">
+              <option>In development</option>
+              <option>Verify</option>
+            </optgroup>
+            <optgroup label="Waiting">
+              <option>Backlog</option>
+              <option>Paused</option>
+            </optgroup>
+          </select>
+        </div>
         <div class="ys-card">
           <div class="ys-card__head"><h3>In development</h3><span class="ys-itag">3 active</span></div>
           <table class="ys-table">

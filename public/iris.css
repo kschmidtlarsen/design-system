@@ -134,6 +134,31 @@ body { color: var(--ink); font-family: var(--font-sans); -webkit-font-smoothing:
 .ys-input { border: 0; background: transparent; color: var(--ink); font-family: inherit; font-size: 13px; outline: none; width: 100%; }
 .ys-input::placeholder { color: var(--faint); }
 
+/* The native <select> popup. A select owns a SECOND surface no page ever draws:
+   the option list, which the browser paints from each option's own
+   background-color and falls back to the UA's white for. Everything else here
+   themes the page; nothing themed that list, so on the graphite theme a select
+   showed --ink text (#E7E8EE) on white. Unreadable, in the DEFAULT theme.
+
+   ELEMENT SELECTORS, DELIBERATELY, against this file's own .ys-* rule. The
+   affected controls carry no class at all — they are plain <select>s that
+   inherit a themed colour from their app — so a .ys-input-scoped fix would miss
+   every one of them. Verified on kanban: 7 selects, 4 with a transparent option
+   background under rgb(231,232,238) text. Options and optgroups are not app
+   components anyone styles by accident; they are the theme's job.
+
+   Three apps had already found this and patched it locally and narrowly —
+   kanban (.project-dropdown/#cardProject only, leaving 4 selects broken), mimir
+   (.chat-account-select only, leaving 11) and muninn. A workaround discovered
+   independently three times belongs in the core, not in three copies.
+
+   The SELECT itself is deliberately untouched: styling the options alone is
+   enough (kanban's and mimir's shipped patches both do exactly that), and
+   giving the closed control a background would repaint every form in every app
+   for a bug that lives in the popup. */
+option { background-color: var(--surface); color: var(--ink); }
+optgroup { background-color: var(--bg); color: var(--muted); font-weight: 650; }
+
 /* ---- Card / panel ------------------------------------------------------ */
 .ys-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
 .ys-card__head { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--line); }

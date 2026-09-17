@@ -29,6 +29,15 @@ Then style with either:
   (--accent/--ok/--warn/--bad), .ys-tag, .ys-itag, .ys-kbd, .ys-table, .ys-seg,
   .ys-stone, plus motion helpers .ys-spinner/.ys-reveal/.ys-typing/.ys-live-dot.
 
+## Native <select>: do NOT re-patch the option list
+
+`option` and `optgroup` are themed here, at the element level, because the
+option list is drawn by the browser from the option's own background-color and
+falls back to white — which put --ink text on white in the graphite theme. Three
+apps patched this locally and narrowly before it was fixed centrally; do not add
+a fourth copy. A plain `<select>` inherits the theme correctly with no class at
+all. Style the closed control however the app likes; leave the list alone.
+
 ## Navigation: use .ys-topbar, never hand-roll a menu
 
 Every app was building its own top bar and laying the links out inline with no
